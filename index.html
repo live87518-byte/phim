@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RẠP HẺM — Phòng chiếu số</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1220;
+    --bg-alt:#111A2C;
+    --card:#141E33;
+    --gold:#E8A94C;
+    --gold-dim:#C98A2F;
+    --cream:#F2EEE3;
+    --muted:#8FA0BC;
+    --red:#8B2E2E;
+    --border:#253352;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse at top, rgba(232,169,76,0.08), transparent 55%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh;
+  }
+  .reel-strip{
+    display:flex;
+    gap:10px;
+    padding:8px 24px;
+    background:#08101E;
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+  }
+  .reel-strip span{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--bg);
+    border:1px solid #2c3b5c;
+    flex-shrink:0;
+  }
+  header.top{
+    padding:28px 24px 18px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .brand{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:38px;
+    letter-spacing:3px;
+    color:var(--gold);
+    line-height:1;
+  }
+  .brand small{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .searchwrap{
+    flex:1;
+    max-width:420px;
+    min-width:220px;
+    position:relative;
+  }
+  .searchwrap input{
+    width:100%;
+    padding:12px 14px 12px 40px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    border-radius:var(--radius);
+    outline:none;
+    transition:border-color .15s;
+  }
+  .searchwrap input:focus{border-color:var(--gold-dim);}
+  .searchwrap::before{
+    content:"⌕";
+    position:absolute;
+    left:14px; top:50%; transform:translateY(-50%);
+    color:var(--muted);
+    font-size:17px;
+  }
+  main{padding:32px 24px 60px;max-width:1280px;margin:0 auto;}
+  .section-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--gold-dim);
+    text-transform:uppercase;
+    margin:0 0 18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{content:"";flex:1;height:1px;background:var(--border);}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(200px,1fr));
+    gap:22px;
+  }
+  .stub{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    cursor:pointer;
+    transition:transform .18s, border-color .18s;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  .stub:hover{transform:translateY(-4px);border-color:var(--gold-dim);}
+  .stub .thumb{
+    width:100%;
+    aspect-ratio:2/3;
+    object-fit:cover;
+    display:block;
+    background:#0d1526;
+  }
+  .stub .id-tag{
+    position:absolute;
+    top:8px; left:8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    background:rgba(8,16,30,0.85);
+    color:var(--gold);
+    padding:2px 6px;
+    border:1px solid var(--border);
+    letter-spacing:1px;
+  }
+  .tear{
+    height:0;
+    border-top:1px dashed var(--border);
+    margin:0;
+  }
+  .stub .info{padding:12px 14px 16px;}
+  .stub h3{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:19px;
+    letter-spacing:1px;
+    margin:0 0 6px;
+    color:var(--cream);
+  }
+  .stub p{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:0;
+    line-height:1.5;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .empty{
+    text-align:center;
+    padding:80px 20px;
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    border:1px dashed var(--border);
+  }
+  .pagination{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:36px;
+    flex-wrap:wrap;
+  }
+  .pagination button{
+    min-width:38px;
+    padding:9px 12px;
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    color:var(--cream);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    cursor:pointer;
+    border-radius:var(--radius);
+  }
+  .pagination button.active{
+    background:var(--gold);
+    color:#1a1206;
+    border-color:var(--gold);
+    font-weight:600;
+  }
+  .pagination button:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* modal */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(5,9,17,0.82);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--bg-alt);
+    border:1px solid var(--gold-dim);
+    max-width:400px;
+    width:100%;
+    padding:28px 26px 24px;
+    position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 8px, transparent 8px 14px);
+  }
+  .modal .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--gold);
+    margin-bottom:10px;
+  }
+  .modal h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:26px;
+    letter-spacing:1px;
+    margin:0 0 12px;
+  }
+  .modal p{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.6;
+    margin:0 0 22px;
+  }
+  .modal .filmname{color:var(--cream);font-weight:600;}
+  .modal-actions{display:flex;gap:10px;}
+  .modal-actions button{
+    flex:1;
+    padding:12px 14px;
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:600;
+    border-radius:var(--radius);
+    cursor:pointer;
+    border:1px solid var(--border);
+  }
+  .btn-cancel{background:transparent;color:var(--muted);}
+  .btn-cancel:hover{border-color:var(--muted);}
+  .btn-confirm{background:var(--gold);color:#1a1206;border-color:var(--gold);}
+  .btn-confirm:hover{background:var(--gold-dim);}
+  footer{
+    text-align:center;
+    padding:26px;
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    border-top:1px solid var(--border);
+  }
+  footer a{color:var(--gold-dim);}
+</style>
+</head>
+<body>
+
+<div class="reel-strip" id="reelTop"></div>
+
+<header class="top">
+  <div class="brand">RẠP HẺM<small>PHÒNG CHIẾU SỐ · SUẤT CHIẾU 24H</small></div>
+  <div class="searchwrap">
+    <input type="text" id="searchInput" placeholder="Tìm tên phim...">
+  </div>
+</header>
+
+<main>
+  <p class="section-label">Đang chiếu</p>
+  <div class="grid" id="filmGrid"></div>
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<footer>Quản lý nội dung tại <a href="admin.html">/admin.html</a></footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="kicker">THÔNG BÁO</div>
+    <h2>Rời khỏi Rạp Hẻm?</h2>
+    <p>Bạn sắp được chuyển đến trang xem phim bên ngoài cho <span class="filmname" id="modalFilmName"></span>. Xác nhận để tiếp tục.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btnCancel">Hủy</button>
+      <button class="btn-confirm" id="btnConfirm">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'cinehem_films';
+const PER_PAGE = 8;
+let currentPage = 1;
+let pendingLink = null;
+
+const placeholderThumb = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+<rect width="300" height="450" fill="#141E33"/>
+<g fill="none" stroke="#2c3b5c" stroke-width="3">
+<circle cx="150" cy="200" r="55"/>
+<circle cx="150" cy="200" r="8" fill="#2c3b5c"/>
+</g>
+<text x="150" y="300" fill="#5b6d8f" font-family="monospace" font-size="13" text-anchor="middle">CHƯA CÓ ẢNH</text>
+</svg>`);
+
+function seedIfEmpty(){
+  if(localStorage.getItem(STORAGE_KEY)) return;
+  const demo = [
+    {id:1, title:'Đêm Sài Gòn', description:'Một câu chuyện về những con hẻm nhỏ và ánh đèn neon lúc nửa đêm.', thumbnail: placeholderThumb, link:'https://example.com/dem-sai-gon'},
+    {id:2, title:'Vực Sương Mù', description:'Hành trình sinh tồn giữa vùng núi phủ sương quanh năm.', thumbnail: placeholderThumb, link:'https://example.com/vuc-suong-mu'},
+    {id:3, title:'Chuyến Tàu Cuối', description:'Bí ẩn trên chuyến tàu đêm cuối cùng rời khỏi thành phố.', thumbnail: placeholderThumb, link:'https://example.com/chuyen-tau-cuoi'}
+  ];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(demo));
+}
+
+function getFilms(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+
+function buildReel(id){
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  for(let i=0;i<40;i++){
+    const s = document.createElement('span');
+    el.appendChild(s);
+  }
+}
+
+function render(){
+  const films = getFilms();
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const filtered = q ? films.filter(f => f.title.toLowerCase().includes(q)) : films;
+
+  const grid = document.getElementById('filmGrid');
+  const pag = document.getElementById('pagination');
+  grid.innerHTML = '';
+  pag.innerHTML = '';
+
+  if(filtered.length === 0){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">${q ? 'Không tìm thấy phim phù hợp.' : 'Chưa có phim nào. Hãy thêm phim tại trang quản trị.'}</div>`;
+    return;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  if(currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PER_PAGE;
+  const pageItems = filtered.slice(start, start + PER_PAGE);
+
+  pageItems.forEach((f, i) => {
+    const card = document.createElement('div');
+    card.className = 'stub';
+    card.innerHTML = `
+      <span class="id-tag">#${String(start+i+1).padStart(3,'0')}</span>
+      <img class="thumb" src="${f.thumbnail || placeholderThumb}" alt="${escapeHtml(f.title)}">
+      <div class="tear"></div>
+      <div class="info">
+        <h3>${escapeHtml(f.title)}</h3>
+        <p>${escapeHtml(f.description || '')}</p>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(f));
+    grid.appendChild(card);
+  });
+
+  if(totalPages > 1){
+    const prev = document.createElement('button');
+    prev.textContent = '‹';
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', () => { currentPage--; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+    pag.appendChild(prev);
+
+    for(let p=1;p<=totalPages;p++){
+      const b = document.createElement('button');
+      b.textContent = p;
+      if(p === currentPage) b.classList.add('active');
+      b.addEventListener('click', () => { currentPage = p; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+      pag.appendChild(b);
+    }
+
+    const next = document.createElement('button');
+    next.textContent = '›';
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', () => { currentPage++; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+    pag.appendChild(next);
+  }
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+function openModal(film){
+  pendingLink = film.link;
+  document.getElementById('modalFilmName').textContent = film.title;
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('show');
+  pendingLink = null;
+}
+
+document.getElementById('btnCancel').addEventListener('click', closeModal);
+document.getElementById('overlay').addEventListener('click', (e) => { if(e.target.id === 'overlay') closeModal(); });
+document.getElementById('btnConfirm').addEventListener('click', () => {
+  if(pendingLink){
+    window.open(pendingLink, '_blank', 'noopener');
+  }
+  closeModal();
+});
+document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; render(); });
+
+buildReel('reelTop');
+seedIfEmpty();
+render();
+
+window.addEventListener('storage', render);
+</script>
+</body>
+</html>

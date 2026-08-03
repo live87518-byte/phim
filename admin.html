@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản trị — Rạp Hẻm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1220;
+    --bg-alt:#111A2C;
+    --card:#141E33;
+    --gold:#E8A94C;
+    --gold-dim:#C98A2F;
+    --cream:#F2EEE3;
+    --muted:#8FA0BC;
+    --red:#8B2E2E;
+    --border:#253352;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh;
+  }
+  .reel-strip{
+    display:flex;
+    gap:10px;
+    padding:8px 24px;
+    background:#08101E;
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+  }
+  .reel-strip span{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--bg);
+    border:1px solid #2c3b5c;
+    flex-shrink:0;
+  }
+  header.top{
+    padding:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .brand{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:30px;
+    letter-spacing:2px;
+    color:var(--gold);
+  }
+  .brand small{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:2px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  a.back{color:var(--gold-dim);font-size:13px;font-family:'IBM Plex Mono',monospace;text-decoration:none;}
+  a.back:hover{text-decoration:underline;}
+
+  main{max-width:1100px;margin:0 auto;padding:32px 24px 60px;}
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:28px;align-items:start;}
+  @media (max-width:820px){.layout{grid-template-columns:1fr;}}
+
+  .panel{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    padding:22px;
+  }
+  .panel h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:22px;
+    letter-spacing:1px;
+    margin:0 0 18px;
+    color:var(--cream);
+  }
+  label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:1px;
+    color:var(--gold-dim);
+    margin-bottom:6px;
+    text-transform:uppercase;
+  }
+  .field{margin-bottom:16px;}
+  input[type=text], input[type=url], textarea{
+    width:100%;
+    padding:11px 12px;
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    border-radius:var(--radius);
+    outline:none;
+  }
+  input:focus, textarea:focus{border-color:var(--gold-dim);}
+  textarea{resize:vertical;min-height:80px;}
+
+  .dropzone{
+    border:1px dashed var(--border);
+    padding:16px;
+    text-align:center;
+    cursor:pointer;
+    background:var(--card);
+    color:var(--muted);
+    font-size:12.5px;
+    position:relative;
+    overflow:hidden;
+  }
+  .dropzone.has-image{padding:0;border-style:solid;}
+  .dropzone img{width:100%;display:block;max-height:220px;object-fit:cover;}
+  .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
+  .btn{
+    padding:12px 16px;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    border:1px solid var(--gold);
+    background:var(--gold);
+    color:#1a1206;
+    width:100%;
+  }
+  .btn:hover{background:var(--gold-dim);}
+  .btn.secondary{background:transparent;color:var(--muted);border-color:var(--border);}
+  .btn.secondary:hover{color:var(--cream);border-color:var(--muted);}
+  .btn.danger{background:transparent;color:#d98080;border-color:var(--red);}
+  .btn.danger:hover{background:var(--red);color:var(--cream);}
+
+  .msg{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    margin-top:10px;
+    min-height:16px;
+  }
+  .msg.ok{color:#8fd6a8;}
+  .msg.err{color:#e08a8a;}
+
+  table{width:100%;border-collapse:collapse;}
+  th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    padding:10px 10px;
+    border-bottom:1px solid var(--border);
+  }
+  td{
+    padding:10px 10px;
+    border-bottom:1px solid var(--border);
+    font-size:13.5px;
+    vertical-align:middle;
+  }
+  td.thumb-cell img{width:44px;height:66px;object-fit:cover;border:1px solid var(--border);}
+  td.title-cell{font-weight:600;}
+  td.desc-cell{color:var(--muted);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  td.link-cell a{color:var(--gold-dim);font-size:12px;word-break:break-all;}
+  .row-actions{display:flex;gap:6px;}
+  .row-actions button{
+    padding:6px 10px;
+    font-size:12px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--muted);
+  }
+  .row-actions button:hover{color:var(--cream);border-color:var(--gold-dim);}
+  .empty-row td{text-align:center;color:var(--muted);padding:30px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+
+  .gate{
+    max-width:360px;
+    margin:80px auto;
+    padding:28px 26px;
+    background:var(--bg-alt);
+    border:1px solid var(--gold-dim);
+  }
+  .gate h2{font-family:'Bebas Neue',sans-serif;font-size:24px;margin:0 0 6px;letter-spacing:1px;}
+  .gate p{color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<div class="reel-strip" id="reelTop"></div>
+
+<header class="top">
+  <div class="brand">RẠP HẺM<small>KHU VỰC QUẢN TRỊ</small></div>
+  <a class="back" href="index.html">← Về trang chính</a>
+</header>
+
+<div id="gateWrap" class="gate">
+  <h2>Đăng nhập quản trị</h2>
+  <p>Nhập mật khẩu để quản lý danh sách phim. (Đây là lớp bảo vệ phía trình duyệt, chỉ mang tính minh họa — không dùng để bảo mật dữ liệu thật.)</p>
+  <div class="field">
+    <label>Mật khẩu</label>
+    <input type="text" id="gatePass" placeholder="admin123">
+  </div>
+  <button class="btn" id="gateBtn">Vào trang quản trị</button>
+  <div class="msg err" id="gateMsg"></div>
+</div>
+
+<main id="adminMain" style="display:none;">
+  <div class="layout">
+    <div class="panel">
+      <h2 id="formTitle">Thêm phim mới</h2>
+      <div class="field">
+        <label>Ảnh thumbnail</label>
+        <div class="dropzone" id="dropzone">
+          <span id="dropzoneText">Nhấn để chọn ảnh (khuyến nghị tỉ lệ 2:3)</span>
+          <input type="file" id="thumbInput" accept="image/*">
+        </div>
+      </div>
+      <div class="field">
+        <label>Link xem phim (trang ngoài)</label>
+        <input type="url" id="linkInput" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>Tiêu đề phim</label>
+        <input type="text" id="titleInput" placeholder="Tên phim">
+      </div>
+      <div class="field">
+        <label>Mô tả phim</label>
+        <textarea id="descInput" placeholder="Mô tả ngắn gọn nội dung phim..."></textarea>
+      </div>
+      <button class="btn" id="saveBtn">Lưu phim</button>
+      <button class="btn secondary" id="cancelEditBtn" style="margin-top:8px;display:none;">Hủy chỉnh sửa</button>
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Danh sách phim (<span id="countLabel">0</span>)</h2>
+      <table>
+        <thead>
+          <tr><th>Ảnh</th><th>Tiêu đề</th><th>Mô tả</th><th>Link</th><th>Thao tác</th></tr>
+        </thead>
+        <tbody id="filmTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+const STORAGE_KEY = 'cinehem_films';
+const ADMIN_PASS = 'admin123';
+let editingId = null;
+let currentThumb = '';
+
+const placeholderThumb = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+<rect width="300" height="450" fill="#141E33"/>
+<g fill="none" stroke="#2c3b5c" stroke-width="3">
+<circle cx="150" cy="200" r="55"/>
+<circle cx="150" cy="200" r="8" fill="#2c3b5c"/>
+</g>
+<text x="150" y="300" fill="#5b6d8f" font-family="monospace" font-size="13" text-anchor="middle">CHƯA CÓ ẢNH</text>
+</svg>`);
+
+function buildReel(id){
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  for(let i=0;i<40;i++){
+    const s = document.createElement('span');
+    el.appendChild(s);
+  }
+}
+buildReel('reelTop');
+
+function getFilms(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveFilms(films){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(films));
+}
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+// gate
+document.getElementById('gateBtn').addEventListener('click', tryEnter);
+document.getElementById('gatePass').addEventListener('keydown', (e) => { if(e.key === 'Enter') tryEnter(); });
+function tryEnter(){
+  const val = document.getElementById('gatePass').value;
+  if(val === ADMIN_PASS){
+    document.getElementById('gateWrap').style.display = 'none';
+    document.getElementById('adminMain').style.display = 'block';
+    renderTable();
+  } else {
+    document.getElementById('gateMsg').textContent = 'Sai mật khẩu, vui lòng thử lại.';
+  }
+}
+
+function resetForm(){
+  editingId = null;
+  currentThumb = '';
+  document.getElementById('formTitle').textContent = 'Thêm phim mới';
+  document.getElementById('linkInput').value = '';
+  document.getElementById('titleInput').value = '';
+  document.getElementById('descInput').value = '';
+  document.getElementById('dropzone').classList.remove('has-image');
+  document.getElementById('dropzone').innerHTML = `<span id="dropzoneText">Nhấn để chọn ảnh (khuyến nghị tỉ lệ 2:3)</span><input type="file" id="thumbInput" accept="image/*">`;
+  document.getElementById('thumbInput').addEventListener('change', handleThumbChange);
+  document.getElementById('cancelEditBtn').style.display = 'none';
+  document.getElementById('formMsg').textContent = '';
+}
+
+function handleThumbChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    currentThumb = ev.target.result;
+    const dz = document.getElementById('dropzone');
+    dz.classList.add('has-image');
+    dz.innerHTML = `<img src="${currentThumb}" alt="preview"><input type="file" id="thumbInput" accept="image/*">`;
+    document.getElementById('thumbInput').addEventListener('change', handleThumbChange);
+  };
+  reader.readAsDataURL(file);
+}
+document.getElementById('thumbInput').addEventListener('change', handleThumbChange);
+
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const title = document.getElementById('titleInput').value.trim();
+  const link = document.getElementById('linkInput').value.trim();
+  const description = document.getElementById('descInput').value.trim();
+  const msg = document.getElementById('formMsg');
+
+  if(!title || !link){
+    msg.className = 'msg err';
+    msg.textContent = 'Vui lòng nhập tối thiểu Tiêu đề và Link xem phim.';
+    return;
+  }
+  try{ new URL(link); }
+  catch(e){
+    msg.className = 'msg err';
+    msg.textContent = 'Link không hợp lệ. Vui lòng nhập đầy đủ, ví dụ: https://...';
+    return;
+  }
+
+  let films = getFilms();
+  if(editingId){
+    films = films.map(f => f.id === editingId ? {...f, title, link, description, thumbnail: currentThumb || f.thumbnail} : f);
+    msg.className = 'msg ok';
+    msg.textContent = 'Đã cập nhật phim.';
+  } else {
+    films.push({
+      id: Date.now(),
+      title, link, description,
+      thumbnail: currentThumb || placeholderThumb
+    });
+    msg.className = 'msg ok';
+    msg.textContent = 'Đã thêm phim mới vào trang chính.';
+  }
+  saveFilms(films);
+  resetForm();
+  renderTable();
+});
+
+document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
+
+function editFilm(id){
+  const films = getFilms();
+  const f = films.find(x => x.id === id);
+  if(!f) return;
+  editingId = id;
+  currentThumb = f.thumbnail;
+  document.getElementById('formTitle').textContent = 'Chỉnh sửa phim';
+  document.getElementById('linkInput').value = f.link;
+  document.getElementById('titleInput').value = f.title;
+  document.getElementById('descInput').value = f.description;
+  const dz = document.getElementById('dropzone');
+  dz.classList.add('has-image');
+  dz.innerHTML = `<img src="${f.thumbnail}" alt="preview"><input type="file" id="thumbInput" accept="image/*">`;
+  document.getElementById('thumbInput').addEventListener('change', handleThumbChange);
+  document.getElementById('cancelEditBtn').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function deleteFilm(id){
+  if(!confirm('Xóa phim này khỏi trang chính?')) return;
+  const films = getFilms().filter(f => f.id !== id);
+  saveFilms(films);
+  renderTable();
+}
+
+function renderTable(){
+  const films = getFilms();
+  document.getElementById('countLabel').textContent = films.length;
+  const body = document.getElementById('filmTableBody');
+  body.innerHTML = '';
+  if(films.length === 0){
+    body.innerHTML = `<tr class="empty-row"><td colspan="5">Chưa có phim nào. Thêm phim đầu tiên ở form bên trái.</td></tr>`;
+    return;
+  }
+  films.slice().reverse().forEach(f => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="thumb-cell"><img src="${f.thumbnail || placeholderThumb}" alt=""></td>
+      <td class="title-cell">${escapeHtml(f.title)}</td>
+      <td class="desc-cell" title="${escapeHtml(f.description)}">${escapeHtml(f.description || '—')}</td>
+      <td class="link-cell"><a href="${f.link}" target="_blank" rel="noopener">${escapeHtml(f.link)}</a></td>
+      <td>
+        <div class="row-actions">
+          <button data-act="edit">Sửa</button>
+          <button data-act="del">Xóa</button>
+        </div>
+      </td>
+    `;
+    tr.querySelector('[data-act="edit"]').addEventListener('click', () => editFilm(f.id));
+    tr.querySelector('[data-act="del"]').addEventListener('click', () => deleteFilm(f.id));
+    body.appendChild(tr);
+  });
+}
+</script>
+</body>
+</html>
